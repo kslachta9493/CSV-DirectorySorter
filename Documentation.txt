@@ -1,0 +1,104 @@
+	EXTRA CREDIT:
+			None Completed.	
+
+	FILES:          sorter.c
+			sorter.h
+			main.c
+			builder.c
+			builder.h
+			mergesort.c
+			Makefile
+			analysis.pdf
+
+	COMPILE:
+
+			Use the provided make file.
+			If you wish to compile by hand, please use the following commands
+			-gcc main.c sorter.c builder.c -o sorter -pthread
+	RUN:
+			To run the program you can use any of the following.
+			./sorter
+			./sorter -x xxxx
+			./sorter -x xxxx -y yyyy
+			./sorter -x xxxx -y yyyy -z zzzz
+
+			Accepted Values for x,y,z in any order
+			-c SORTSTRING
+				DEFAULT VALUE: NONE ERRORS
+			-d Input Directory to read for all files
+				DEFAULT VALUE: Current Directory
+			-o Output Directory for all files to be placed
+				DEFAULT VALUE: Current Directory
+	
+			EXAMPLE:
+				./sorter -d ./f1
+
+			This command would find all .csv files in the directory ./f1 and below and
+			output them to directory ./f1. It would sort on the default value of the first column.
+
+	EXPECTATION/ASSUMPTIONS:
+			TOTAL THREAD COUNT:
+				Total thread count will not exceed 2000. This is limit placed on the machine.
+				Please note our program SHOULD work on an excess of 2k but I am unable to test for it.
+
+
+	SUBMITTED BY:  	Kevin Slachta
+			Nowshad Azimi
+                	All code our own except where credited to others.
+
+   	PURPOSE:
+		Walks the entire given directory finding any csv files contained within and sorting them based on a specified column and place them into a file with all CSVs sorted.
+
+	OVERALL METHOD:
+		The list of general tasks is:
+			1. Create a thread when either a CSV or a Directory is found
+			
+			2.
+				A. CSV FOUND
+					1. Thread begins sorting the CSV and placing it into the BST
+				B. THREAD FOUND
+					1. Thread begins scanning the directory found
+	
+			3. In the thread for the csv follow the same process as before
+				1a. Create a massive buffer of all input
+				2a. Iterate through the buffer and save all data
+			  	    data in an array of structs delimited by the commas
+				3a. Pass the data to mergesort to sort on a
+			           column in ascending order
+				4a. Output the sorted csv file
+			4. After the sorting of a CSV is done is it then placed into a BST for global sorting
+
+	SOURCE FILES: 
+		BUILDER.C:
+			1. Accepts a buffer from SORTER.C and sorts it into the CSV struct for proper sorting by MERGESORT.c
+			2. Output the sorted CSV struct from MERGESORT.C to a file defined as originalfilename-sorted-colname.csv
+		SORTER.C:
+			Has 3 main jobs.
+				1. Open the file location given to it and place it in a massive buffer to be checked for edge cases
+				2. Check that the csv has the column it was asked to sort on		
+				3. Pass the buffer to BUILDER.C to be sorted into the CSV struct for sorting
+		MAIN.C:
+			1. Create a new thread every time a .csv file or directory is found based on the given directory
+			2. Calls once initsorting in each thread from sorter.c for every csv file found
+
+		MERGESORT.C:
+			1. Accepts a unsorted CSV from BUILDER.C
+			2. Sorts the CSV based on the column specificed and sends it back to BUILDER.C for output
+
+   	ASSUMPTIONS:
+		1. The program should sort in ascending order for any given properly defined csv file
+		2. Leading and trailing whitespace is not used for comparing 2 values and is removed
+		   in the output of the csv
+		3. The special A character is not defined and therefor is ignored
+		4. Any order of command line flags should be accepted.
+		5. It will not error if you give it invalid flags.
+		6. If no directory is specific it will use the current directory.
+		7. If fork or wait fails it end the program, unable to recover.
+		8. If you specify -c director_name, it will only sort any csv file that has the column head director_name, the rest will output a failure notice
+
+
+
+	DIFFICULTIES:
+		1. Ensuring safe data manipulation
+
+
